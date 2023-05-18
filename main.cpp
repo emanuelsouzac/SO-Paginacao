@@ -49,7 +49,6 @@ void otm(){
 
     while(pont < tamSeq){
         for(int i = 0; i < qtdQuadros; i++){
-            //cout << seq[pont] << " " << quadros[i] << endl;
             if(seq[pont] == quadros[i]){
                     estaNoQuadro = true;
                     break;
@@ -58,7 +57,6 @@ void otm(){
         if(estaNoQuadro == false){
             for(int i = 0; i < qtdQuadros; i++){
                 for(int j = pont; j < tamSeq; j++){ // <<< VERIFICAR PONT OU PONT+1 >>>
-                    //cout << "Comparando " << quadros[i] << " com " << seq[j] << endl;
                     if(quadros[i] == seq[j]){
                         estaNaLista[i] = true;
                         pos[i] = j;
@@ -73,20 +71,27 @@ void otm(){
                     break;
                 }
             }
-            /*if(aux == false){
+            if(aux == false){
                 maisDist = pos[0];
-                for(int i = 0; i < qtdQuadros-1; i++){
-                    if(maisDist > pos[i+1]){
-
+                for(int i = 1; i < qtdQuadros; i++){
+                    if(pos[i] > maisDist){
+                        maisDist = pos[i];
                     }
                 }
-                quadros[maisDist] = seq[pont];
-            }*/
+                for(int i = 0; i < qtdQuadros; i++){
+                    if(pos[i] == maisDist){
+                        quadros[i] = seq[pont];
+                    }
+                }
+            }
             pags++;
             //for(int i = 0; i < qtdQuadros; i++){
             //    cout << quadros[i] << " ";
             //}
             //cout << endl;
+        }
+        for(int i = 0; i < qtdQuadros; i++){
+            estaNaLista[i] = false;
         }
         estaNoQuadro = false;
         aux = false;
