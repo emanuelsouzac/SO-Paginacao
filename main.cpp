@@ -9,9 +9,16 @@ vector<int> seq;
 int qtdQuadros, tamSeq;
 
 void fifo(){
+
     int quadros[qtdQuadros] = {0};
     int pags = 0, pont = 0, pont2 = 0;
     bool estaNoQuadro = false;
+
+    for(int i = 0; i < qtdQuadros; i++){
+        quadros[i] = seq[i];
+        pont++;
+        pags++;
+    }
 
     while(pont < tamSeq){
         for(int i = 0; i < qtdQuadros; i++){
@@ -36,9 +43,11 @@ void fifo(){
     }
 
     cout << "FIFO " << pags << endl;
+
 }
 
 void otm(){
+
     int quadros[qtdQuadros] = {0};
     int pags = 0, pont = 0;
     bool estaNoQuadro = false;
@@ -46,6 +55,12 @@ void otm(){
     int pos[qtdQuadros] = {0};
     bool aux = false;
     int maisDist = 0;
+
+    for(int i = 0; i < qtdQuadros; i++){
+        quadros[i] = seq[i];
+        pont++;
+        pags++;
+    }
 
     while(pont < tamSeq){
         for(int i = 0; i < qtdQuadros; i++){
@@ -100,12 +115,63 @@ void otm(){
     }
 
     cout << "OTM " << pags << endl;
+
 }
 
 void lru(){
-    //int pags;
 
-    //cout << "LRU " << pags << endl;
+    int quadros[qtdQuadros] = {0};
+    int pags = 0, pont = 0;
+    bool estaNoQuadro = false;
+    int pos[qtdQuadros] = {0};
+    int maisDist = 0;
+
+    for(int i = 0; i < qtdQuadros; i++){
+        quadros[i] = seq[i];
+        pont++;
+        pags++;
+    }
+
+    while(pont < tamSeq){
+        for(int i = 0; i < qtdQuadros; i++){
+            if(seq[pont] == quadros[i]){
+                    estaNoQuadro = true;
+                    break;
+            }
+        }
+        if(estaNoQuadro == false){
+            for(int i = 0; i < qtdQuadros; i++){
+                for(int j = pont; j >= 0; j--){ // <<< VERIFICAR PONT OU PONT+1 >>>
+                    if(quadros[i] == seq[j]){
+                        pos[i] = j;
+                        break;
+                    }
+                }
+            }
+            maisDist = pos[0];
+            for(int i = 1; i < qtdQuadros; i++){
+                if(pos[i] < maisDist){
+                    maisDist = pos[i];
+                }
+            }
+            for(int i = 0; i < qtdQuadros; i++){
+                if(pos[i] == maisDist){
+                    quadros[i] = seq[pont];
+                }
+            }
+            pags++;
+            //for(int i = 0; i < qtdQuadros; i++){
+            //    cout << quadros[i] << " ";
+            //}
+            //cout << endl;
+        }
+        estaNoQuadro = false;
+        maisDist = 0;
+        pont++;
+    }
+
+    cout << "LRU " << pags << endl;
+
 }
 
 int main()
@@ -132,6 +198,7 @@ int main()
 
     fifo();
     otm();
+    lru();
 
     return 0;
 }
