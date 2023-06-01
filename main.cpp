@@ -14,29 +14,20 @@ void fifo(){
     int pags = 0, pont = 0, pont2 = 0;
     bool estaNoQuadro = false;
 
-    for(int i = 0; i < qtdQuadros; i++){
-        quadros[i] = seq[i];
-        pont++;
-        pags++;
-    }
-
     while(pont < tamSeq){
+        // Checa se o número em questão da sequência já está no quadro varrendo todo o array
         for(int i = 0; i < qtdQuadros; i++){
-            //cout << seq[pont] << " " << quadros[i] << endl;
             if(seq[pont] == quadros[i]){
-                    estaNoQuadro = true;
+                    estaNoQuadro = true; // Caso o número seja encontrado, a variável de controle estaNoQuadro vira verdadeiro
                     break;
             }
         }
+        // Do contrário, o número é inserido no quadro (array) de maneira circular
         if(estaNoQuadro == false){
             quadros[pont2] = seq[pont];
             pags++;
             pont2++;
-            pont2 = pont2 % 4;
-            //for(int i = 0; i < qtdQuadros; i++){
-            //    cout << quadros[i] << " ";
-            //}
-            //cout << endl;
+            pont2 = pont2 % qtdQuadros; // Algoritmo para tornar a lista circular, fazendo o ponteiro retornar para o início
         }
         estaNoQuadro = false;
         pont++;
@@ -49,18 +40,12 @@ void fifo(){
 void otm(){
 
     int quadros[qtdQuadros] = {0};
-    int pags = 0, pont = 0;
+    int pags = 0, pont = 0, pont2 = 0;
     bool estaNoQuadro = false;
     bool estaNaLista[qtdQuadros] = {false};
     int pos[qtdQuadros] = {0};
     bool aux = false;
     int maisDist = 0;
-
-    for(int i = 0; i < qtdQuadros; i++){
-        quadros[i] = seq[i];
-        pont++;
-        pags++;
-    }
 
     while(pont < tamSeq){
         for(int i = 0; i < qtdQuadros; i++){
@@ -69,23 +54,34 @@ void otm(){
                     break;
             }
         }
-        if(estaNoQuadro == false){
+        // Primeiro preenche todo o array dos quadros
+        if(estaNoQuadro == false && pont2 < qtdQuadros){
+            quadros[pont2] = seq[pont];
+            pags++;
+            pont2++;
+            continue;
+        }
+        // Após cheio, será feita a verificação OTM
+        if(estaNoQuadro == false && pont2 >= qtdQuadros){
+            // Varre toda a sequência a partir do número atual
             for(int i = 0; i < qtdQuadros; i++){
-                for(int j = pont; j < tamSeq; j++){ // <<< VERIFICAR PONT OU PONT+1 >>>
+                for(int j = pont; j < tamSeq; j++){
                     if(quadros[i] == seq[j]){
-                        estaNaLista[i] = true;
-                        pos[i] = j;
+                        estaNaLista[i] = true; // A variável estaNaLista informa se a página do quadro se encontra na sequência
+                        pos[i] = j; // Guarda a posição dessa página na sequência
                         break;
                     }
                 }
             }
             for(int i = 0; i < qtdQuadros; i++){
+                // Caso uma determinada página presente no quadro não esteja na sequência, ela sairá para dar lugar a página da vez
                 if(estaNaLista[i] == false){
                     quadros[i] = seq[pont];
-                    aux = true;
+                    aux = true; // A variável aux será útil para informar se a substituição já foi realizada
                     break;
                 }
             }
+            // Caso a substituição não tenha sido realizada, será necessário descobrir qual página está mais distante da página da vez
             if(aux == false){
                 maisDist = pos[0];
                 for(int i = 1; i < qtdQuadros; i++){
@@ -94,17 +90,15 @@ void otm(){
                     }
                 }
                 for(int i = 0; i < qtdQuadros; i++){
+                    // A página no quadro que está mais distante na sequência sai e dá lugar à página da vez
                     if(pos[i] == maisDist){
                         quadros[i] = seq[pont];
                     }
                 }
             }
             pags++;
-            //for(int i = 0; i < qtdQuadros; i++){
-            //    cout << quadros[i] << " ";
-            //}
-            //cout << endl;
         }
+        // Variáveis de controle retornam ao padrão
         for(int i = 0; i < qtdQuadros; i++){
             estaNaLista[i] = false;
         }
@@ -120,17 +114,15 @@ void otm(){
 
 void lru(){
 
+    // LRU é similar ao OTM
+    // A diferença é que o OTM olha a sequência a partir do pont
+    // O LRU irá olhar antes do pont, salvar as posições e usar a menor
+
     int quadros[qtdQuadros] = {0};
-    int pags = 0, pont = 0;
+    int pags = 0, pont = 0, pont2 = 0;
     bool estaNoQuadro = false;
     int pos[qtdQuadros] = {0};
     int maisDist = 0;
-
-    for(int i = 0; i < qtdQuadros; i++){
-        quadros[i] = seq[i];
-        pont++;
-        pags++;
-    }
 
     while(pont < tamSeq){
         for(int i = 0; i < qtdQuadros; i++){
@@ -139,10 +131,18 @@ void lru(){
                     break;
             }
         }
-        if(estaNoQuadro == false){
+        if(estaNoQuadro == false && pont2 < qtdQuadros){
+            quadros[pont2] = seq[pont];
+            pags++;
+            pont2++;
+            continue;
+        }
+        if(estaNoQuadro == false && pont2 >= qtdQuadros){
             for(int i = 0; i < qtdQuadros; i++){
-                for(int j = pont; j >= 0; j--){ // <<< VERIFICAR PONT OU PONT+1 >>>
+                for(int j = pont; j >= 0; j--){
                     if(quadros[i] == seq[j]){
+                        // Só é necessário salvar a posição
+                        // Uma vez no quadro, é certo que ele já esteve alguma vez na sequência
                         pos[i] = j;
                         break;
                     }
@@ -160,11 +160,8 @@ void lru(){
                 }
             }
             pags++;
-            //for(int i = 0; i < qtdQuadros; i++){
-            //    cout << quadros[i] << " ";
-            //}
-            //cout << endl;
         }
+
         estaNoQuadro = false;
         maisDist = 0;
         pont++;
@@ -186,6 +183,10 @@ int main()
     {
         if(aux == 0){
            qtdQuadros = stoi(linha);
+           if (qtdQuadros == 0){
+                cout << "Quantidade de quadros invalida" << endl;
+                return 0;
+           }
            aux++;
         }else{
             seq.push_back(stoi(linha));
